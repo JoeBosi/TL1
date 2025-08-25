@@ -3,46 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Monitor AppSheet</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#000000">
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       height: 100%;
       overflow: hidden;
+      background: #000;
     }
     iframe {
       border: none;
-      width: 100vw;
-      height: 100vh;
+      width: 200%;
+      height: 200%;
+      transform: scale(0.5);
+      transform-origin: 0 0;
     }
   </style>
 </head>
 <body>
-  <iframe id="appsheetFrame" src="https://www.appsheet.com/start/e5e93bc0-8f35-4c1f-9294-11cbfa5792ca#view=TV" allowfullscreen
-    style="width:200%; height:200%; border:none; transform:scale(0.5); transform-origin:0 0;"
-    ></iframe>
+  <iframe src="https://www.appsheet.com/start/e5e93bc0-8f35-4c1f-9294-11cbfa5792ca#view=TV" allowfullscreen></iframe>
 
   <script>
-    const views = [
-      "TV",
-      "TV FALEGNAMERIA",
-      "TV LAMELLARE",
-      "TV MAGAZZINO CONTROLLO",
-      "TV MAGAZZINO PRELEVARE"
-    ];
+    const views = ["TV","TV FALEGNAMERIA","TV LAMELLARE","TV MAGAZZINO CONTROLLO","TV MAGAZZINO PRELEVARE"];
+    let i = 0, iframe = document.querySelector("iframe");
+    setInterval(()=>{
+      i = (i+1)%views.length;
+      iframe.src = "https://www.appsheet.com/start/e5e93bc0-8f35-4c1f-9294-11cbfa5792ca#view=" + encodeURIComponent(views[i]);
+    },60000);
 
-    const baseUrl = "https://www.appsheet.com/start/e5e93bc0-8f35-4c1f-9294-11cbfa5792ca#view=";
-    let currentIndex = 0;
-    const iframe = document.getElementById("appsheetFrame");
-
-    function cycleViews() {
-      currentIndex = (currentIndex + 1) % views.length;
-      // Codifica spazi per URL
-      const encodedView = encodeURIComponent(views[currentIndex]);
-      iframe.src = baseUrl + encodedView;
+    // registra il service worker se disponibile
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err=>console.log("SW reg error",err));
     }
-
-    setInterval(cycleViews, 60000); // ogni 30 secondi
   </script>
 </body>
 </html>
